@@ -1,0 +1,39 @@
+version: '3'
+services:
+  web1:
+    build:
+      context: ./web1
+    ports:
+      - "8081:80"
+    networks:
+      - mynetworkbalancer
+  web2:
+    build:
+      context: ./web2
+    ports:
+      - "8082:80"
+    networks:
+      - mynetworkbalancer
+  mysql:
+    image: mysql:debian
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: alumnosdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - mynetworkbalancer
+    volumes:
+      - mysql-data:/var/lib/mysql
+  haproxy:
+    image: haproxy:latest
+    ports:
+      - "8085:80"
+    networks:
+      - mynetworkbalancer
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+networks:
+  mynetworkbalancer:
+volumes:
+  mysql-data:
